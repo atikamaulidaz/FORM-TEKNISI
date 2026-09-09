@@ -1,98 +1,171 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+import React from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
+import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
+  const router = useRouter();
+
+  const handleNavigateToSurvey = () => {
+    router.push("survey");
+  };
+
+  const handleNavigateToPemasangan = () => {
+    router.push("pemasangan");
+  };
+
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+    <ScrollView style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.title}>📋 FORMULIR TEKNISI</Text>
+        {/* <Text style={styles.subtitle}>ANEKA WATER HEATER</Text> */}
+      </View>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+      {/* Deskripsi */}
+      {/* <View style={styles.descriptionBox}>
+        <Text style={styles.descriptionText}>
+          Pilih formulir yang ingin Anda isi untuk mencatat data pemasangan atau
+          survey unit water heater.
+        </Text>
+      </View> */}
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
+      {/* Formulir Survey Card */}
+      <TouchableOpacity
+        style={styles.card}
+        onPress={handleNavigateToSurvey}
+        activeOpacity={0.7}
+      >
+        <Text style={styles.cardIcon}>📝</Text>
+        <Text style={styles.cardTitle}>Formulir Survey</Text>
+        <Text style={styles.cardDescription}>
+          Isi data survey unit water heater sebelum pemasangan
+        </Text>
+        <Text style={styles.cardArrow}>Buka →</Text>
+      </TouchableOpacity>
 
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+      {/* Formulir Pemasangan Card */}
+      <TouchableOpacity
+        style={[styles.card, styles.cardSecondary]}
+        onPress={handleNavigateToPemasangan}
+        activeOpacity={0.7}
+      >
+        <Text style={styles.cardIcon}>🔧</Text>
+        <Text style={styles.cardTitle}>Formulir Pemasangan</Text>
+        <Text style={styles.cardDescription}>
+          Catat komponen dan barang yang digunakan saat pemasangan
+        </Text>
+        <Text style={styles.cardArrow}>Buka →</Text>
+      </TouchableOpacity>
+
+      {/* Info Box */}
+      {/* <View style={styles.infoBox}>
+        <Text style={styles.infoTitle}>💡 Petunjuk:</Text>
+        <Text style={styles.infoText}>
+          • Formulir Survey: Isi sebelum melakukan pemasangan{"\n"}• Formulir
+          Pemasangan: Isi saat/setelah pemasangan
+        </Text>
+      </View> */}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
+    backgroundColor: "#f9f9f9",
+    paddingTop: 60,
+    paddingHorizontal: 15,
+    paddingBottom: 15,
   },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
-  },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+  header: {
+    backgroundColor: "#003da5",
+    padding: 30,
+    borderRadius: 12,
+    marginBottom: 25,
+    alignItems: "center",
   },
   title: {
-    textAlign: 'center',
+    fontSize: 26,
+    fontWeight: "bold",
+    color: "#fff",
   },
-  code: {
-    textTransform: 'uppercase',
+  subtitle: {
+    fontSize: 14,
+    color: "#fff",
+    marginTop: 8,
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  descriptionBox: {
+    backgroundColor: "#fff",
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 25,
+    borderLeftWidth: 4,
+    borderLeftColor: "#ff9900",
+  },
+  descriptionText: {
+    fontSize: 14,
+    color: "#555",
+    lineHeight: 22,
+  },
+  card: {
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 12,
+    marginBottom: 15,
+    borderLeftWidth: 5,
+    borderLeftColor: "#003da5",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  cardSecondary: {
+    borderLeftColor: "#ff9900",
+  },
+  cardIcon: {
+    fontSize: 40,
+    marginBottom: 10,
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 8,
+  },
+  cardDescription: {
+    fontSize: 14,
+    color: "#666",
+    lineHeight: 20,
+    marginBottom: 12,
+  },
+  cardArrow: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#003da5",
+  },
+  infoBox: {
+    backgroundColor: "#e8f4f8",
+    padding: 15,
+    borderRadius: 8,
+    marginTop: 10,
+    marginBottom: 30,
+  },
+  infoTitle: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#003da5",
+    marginBottom: 8,
+  },
+  infoText: {
+    fontSize: 13,
+    color: "#555",
+    lineHeight: 20,
   },
 });
