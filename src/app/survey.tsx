@@ -1,13 +1,13 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
-    Alert,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
+  Alert,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View
 } from "react-native";
 import { supabase } from "../lib/supabase";
 
@@ -726,7 +726,7 @@ export default function SurveyForm() {
 
       {/* FOTO & VIDEO (16-22) */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>16-22. Foto & Video *</Text>
+        <Text style={styles.sectionTitle}>Foto & Video *</Text>
 
         {[
           { id: "rumahtampak", label: "16. Rumah Tampak Depan" },
@@ -781,7 +781,7 @@ export default function SurveyForm() {
 
       {/* CATATAN TAMBAHAN (23) */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>23. Catatan Tambahan (Opsional)</Text>
+        <Text style={styles.sectionTitle}>Catatan Tambahan (Opsional)</Text>
 
         <TextInput
           style={[styles.input, { height: 100 }]}

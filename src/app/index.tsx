@@ -1,171 +1,405 @@
+import { useRouter } from "expo-router";
 import React from "react";
 import {
+  Image,
+  Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
-  TouchableOpacity,
-  ScrollView,
 } from "react-native";
-import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
   const router = useRouter();
-
-  const handleNavigateToSurvey = () => {
-    router.push("survey");
-  };
-
-  const handleNavigateToPemasangan = () => {
-    router.push("pemasangan");
-  };
+  const [activeTab, setActiveTab] = React.useState("utama");
 
   return (
-    <ScrollView style={styles.container}>
-      {/* Header */}
+    <View style={styles.container}>
+      {/* Header dengan Logo */}
       <View style={styles.header}>
-        <Text style={styles.title}>📋 FORMULIR TEKNISI</Text>
-        {/* <Text style={styles.subtitle}>ANEKA WATER HEATER</Text> */}
+        <Image
+          source={require("../../assets/images/logo.png")}
+          style={styles.logoImage}
+        />
+        <View style={styles.headerIcons}>
+          <Pressable style={styles.iconBtn}>
+            <Text style={styles.icon}>🔔</Text>
+          </Pressable>
+          <Pressable style={styles.iconBtn}>
+            <Text style={styles.icon}>👤</Text>
+          </Pressable>
+        </View>
       </View>
 
-      {/* Deskripsi */}
-      {/* <View style={styles.descriptionBox}>
-        <Text style={styles.descriptionText}>
-          Pilih formulir yang ingin Anda isi untuk mencatat data pemasangan atau
-          survey unit water heater.
-        </Text>
-      </View> */}
+      {/* Main Content */}
+      <ScrollView style={styles.scrollContent}>
+        {/* Dashboard Label */}
+        <Text style={styles.dashboardLabel}>Dashboard</Text>
 
-      {/* Formulir Survey Card */}
-      <TouchableOpacity
-        style={styles.card}
-        onPress={handleNavigateToSurvey}
-        activeOpacity={0.7}
-      >
-        <Text style={styles.cardIcon}>📝</Text>
-        <Text style={styles.cardTitle}>Formulir Survey</Text>
-        <Text style={styles.cardDescription}>
-          Isi data survey unit water heater sebelum pemasangan
-        </Text>
-        <Text style={styles.cardArrow}>Buka →</Text>
-      </TouchableOpacity>
+        {/* Welcome Section */}
+        <View style={styles.welcomeSection}>
+          <Text style={styles.welcomeTitle}>Selamat datang</Text>
+          <Text style={styles.welcomeSubtitle}>
+            Pantau dokumen dan pekerjaan kamu di sini.
+          </Text>
+        </View>
 
-      {/* Formulir Pemasangan Card */}
-      <TouchableOpacity
-        style={[styles.card, styles.cardSecondary]}
-        onPress={handleNavigateToPemasangan}
-        activeOpacity={0.7}
-      >
-        <Text style={styles.cardIcon}>🔧</Text>
-        <Text style={styles.cardTitle}>Formulir Pemasangan</Text>
-        <Text style={styles.cardDescription}>
-          Catat komponen dan barang yang digunakan saat pemasangan
-        </Text>
-        <Text style={styles.cardArrow}>Buka →</Text>
-      </TouchableOpacity>
+        {/* Perlu Perhatian Section */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Perlu perhatian</Text>
+            <Pressable>
+              <Text style={styles.seeAllBtn}>Terdekat</Text>
+            </Pressable>
+          </View>
 
-      {/* Info Box */}
-      {/* <View style={styles.infoBox}>
-        <Text style={styles.infoTitle}>💡 Petunjuk:</Text>
-        <Text style={styles.infoText}>
-          • Formulir Survey: Isi sebelum melakukan pemasangan{"\n"}• Formulir
-          Pemasangan: Isi saat/setelah pemasangan
-        </Text>
-      </View> */}
-    </ScrollView>
+          {/* Card Dokumen Pengajuan */}
+          <Pressable
+            style={styles.card}
+            onPress={() => router.push("/survey-list")}
+          >
+            <View style={styles.cardIcon}>
+              <Text style={styles.cardIconText}>📄</Text>
+            </View>
+            <View style={styles.cardContent}>
+              <Text style={styles.cardTitle}>Dokumen Pengajuan</Text>
+              <Text style={styles.cardSubtitle}>Membutuhkan tindakan</Text>
+            </View>
+            <Text style={styles.cardAction}>Segera</Text>
+          </Pressable>
+
+          {/* Card Batas Tindakan */}
+          <Pressable style={styles.card}>
+            <View style={styles.cardIcon}>
+              <Text style={styles.cardIconText}>⏰</Text>
+            </View>
+            <View style={styles.cardContent}>
+              <Text style={styles.cardTitle}>Batas tindakan</Text>
+              <Text style={styles.cardSubtitle}>Hari ini</Text>
+            </View>
+          </Pressable>
+        </View>
+
+        {/* Aktivitas Terakhir Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Aktivitas terakhir</Text>
+
+          {/* Activity Item 1 */}
+          <Pressable style={styles.activityItem}>
+            <View style={styles.activityIcon}>
+              <Text style={styles.activityIconText}>✓</Text>
+            </View>
+            <View style={styles.activityContent}>
+              <Text style={styles.activityTitle}>
+                Dokumen berhasil diperbarui
+              </Text>
+              <Text style={styles.activityTime}>Beberapa saat yang lalu</Text>
+            </View>
+          </Pressable>
+
+          {/* Activity Item 2 */}
+          <Pressable
+            style={styles.activityItem}
+            onPress={() => router.push("/survey")}
+          >
+            <View style={styles.activityIcon}>
+              <Text style={styles.activityIconText}>📋</Text>
+            </View>
+            <View style={styles.activityContent}>
+              <Text style={styles.activityTitle}>Formulir baru dibuat</Text>
+              <Text style={styles.activityTime}>Hari ini</Text>
+            </View>
+          </Pressable>
+        </View>
+
+        {/* Spacing untuk bottom nav */}
+        <View style={{ height: 100 }} />
+      </ScrollView>
+
+      {/* Bottom Navigation */}
+      <View style={styles.bottomNav}>
+        <Pressable
+          style={[
+            styles.navItem,
+            activeTab === "utama" && styles.navItemActive,
+          ]}
+          onPress={() => setActiveTab("utama")}
+        >
+          <Text style={styles.navIcon}>🏠</Text>
+          <Text
+            style={[
+              styles.navLabel,
+              activeTab === "utama" && styles.navLabelActive,
+            ]}
+          >
+            UTAMA
+          </Text>
+        </Pressable>
+
+        <Pressable
+          style={[
+            styles.navItem,
+            activeTab === "forms" && styles.navItemActive,
+          ]}
+          onPress={() => {
+            setActiveTab("forms");
+            router.push("/survey-list");
+          }}
+        >
+          <Text style={styles.navIcon}>📋</Text>
+          <Text
+            style={[
+              styles.navLabel,
+              activeTab === "forms" && styles.navLabelActive,
+            ]}
+          >
+            SURVEY
+          </Text>
+        </Pressable>
+
+        <Pressable
+          style={[
+            styles.navItem,
+            activeTab === "pemasangan" && styles.navItemActive,
+          ]}
+          onPress={() => {
+            setActiveTab("pemasangan");
+            router.push("/pemasangan-list");
+          }}
+        >
+          <Text style={styles.navIcon}>🔧</Text>
+          <Text
+            style={[
+              styles.navLabel,
+              activeTab === "pemasangan" && styles.navLabelActive,
+            ]}
+          >
+            PASANG
+          </Text>
+        </Pressable>
+        <Pressable
+          style={[
+            styles.navItem,
+            activeTab === "rincian" && styles.navItemActive,
+          ]}
+          onPress={() => {
+            setActiveTab("rincian");
+            router.push("/rincian-list");
+          }}
+        >
+          <Text style={styles.navIcon}>📝</Text>
+          <Text
+            style={[
+              styles.navLabel,
+              activeTab === "rincian" && styles.navLabelActive,
+            ]}
+          >
+            RINCIAN
+          </Text>
+        </Pressable>
+        <Pressable
+          style={[styles.navItem, activeTab === "gaji" && styles.navItemActive]}
+          onPress={() => {
+            setActiveTab("gaji");
+            router.push("/gaji-list");
+          }}
+        >
+          <Text style={styles.navIcon}>💰</Text>
+          <Text
+            style={[
+              styles.navLabel,
+              activeTab === "gaji" && styles.navLabelActive,
+            ]}
+          >
+            GAJI
+          </Text>
+        </Pressable>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f9f9f9",
-    paddingTop: 60,
-    paddingHorizontal: 15,
-    paddingBottom: 15,
+    backgroundColor: "#f5f5f5",
   },
   header: {
-    backgroundColor: "#003da5",
-    padding: 30,
-    borderRadius: 12,
-    marginBottom: 25,
+    backgroundColor: "#fff",
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    paddingTop: 50,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e0e0e0",
+  },
+  logoImage: {
+    width: 70,
+    height: 70,
+    resizeMode: "contain",
+  },
+  headerIcons: {
+    flexDirection: "row",
+    gap: 10,
+  },
+  iconBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#f0f0f0",
+    justifyContent: "center",
     alignItems: "center",
   },
-  title: {
-    fontSize: 26,
-    fontWeight: "bold",
-    color: "#fff",
+  icon: {
+    fontSize: 20,
   },
-  subtitle: {
+  scrollContent: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 20,
+  },
+  dashboardLabel: {
     fontSize: 14,
-    color: "#fff",
-    marginTop: 8,
-  },
-  descriptionBox: {
-    backgroundColor: "#fff",
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 25,
-    borderLeftWidth: 4,
-    borderLeftColor: "#ff9900",
-  },
-  descriptionText: {
-    fontSize: 14,
-    color: "#555",
-    lineHeight: 22,
-  },
-  card: {
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 12,
-    marginBottom: 15,
-    borderLeftWidth: 5,
-    borderLeftColor: "#003da5",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  cardSecondary: {
-    borderLeftColor: "#ff9900",
-  },
-  cardIcon: {
-    fontSize: 40,
+    color: "#999",
     marginBottom: 10,
   },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 8,
-  },
-  cardDescription: {
-    fontSize: 14,
-    color: "#666",
-    lineHeight: 20,
-    marginBottom: 12,
-  },
-  cardArrow: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#003da5",
-  },
-  infoBox: {
-    backgroundColor: "#e8f4f8",
-    padding: 15,
-    borderRadius: 8,
-    marginTop: 10,
+  welcomeSection: {
     marginBottom: 30,
   },
-  infoTitle: {
-    fontSize: 14,
+  welcomeTitle: {
+    fontSize: 32,
     fontWeight: "bold",
-    color: "#003da5",
+    color: "#000",
     marginBottom: 8,
   },
-  infoText: {
+  welcomeSubtitle: {
+    fontSize: 16,
+    color: "#999",
+  },
+  section: {
+    marginBottom: 30,
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#000",
+  },
+  seeAllBtn: {
+    fontSize: 14,
+    color: "#ff6600",
+    fontWeight: "600",
+  },
+  card: {
+    flexDirection: "row",
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 15,
+    marginBottom: 12,
+    alignItems: "center",
+    gap: 15,
+    borderLeftWidth: 4,
+    borderLeftColor: "#ff6600",
+  },
+  cardIcon: {
+    width: 50,
+    height: 50,
+    borderRadius: 8,
+    backgroundColor: "#fff5f0",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cardIconText: {
+    fontSize: 24,
+  },
+  cardContent: {
+    flex: 1,
+  },
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#000",
+    marginBottom: 4,
+  },
+  cardSubtitle: {
     fontSize: 13,
-    color: "#555",
-    lineHeight: 20,
+    color: "#999",
+  },
+  cardAction: {
+    fontSize: 14,
+    color: "#ff6600",
+    fontWeight: "600",
+  },
+  activityItem: {
+    flexDirection: "row",
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 15,
+    marginBottom: 12,
+    alignItems: "flex-start",
+    gap: 15,
+  },
+  activityIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 8,
+    backgroundColor: "#f0f0f0",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  activityIconText: {
+    fontSize: 20,
+  },
+  activityContent: {
+    flex: 1,
+  },
+  activityTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#000",
+    marginBottom: 4,
+  },
+  activityTime: {
+    fontSize: 13,
+    color: "#999",
+  },
+  bottomNav: {
+    flexDirection: "row",
+    backgroundColor: "#fff",
+    borderTopWidth: 1,
+    borderTopColor: "#e0e0e0",
+    paddingBottom: 20,
+    paddingTop: 10,
+    justifyContent: "space-around",
+    paddingHorizontal: 20,
+  },
+  navItem: {
+    alignItems: "center",
+    paddingVertical: 8,
+    flex: 1,
+    borderRadius: 20,
+    paddingHorizontal: 10,
+  },
+  navItemActive: {
+    backgroundColor: "#0052cc",
+  },
+  navIcon: {
+    fontSize: 24,
+    marginBottom: 4,
+  },
+  navLabel: {
+    fontSize: 11,
+    color: "#666",
+    fontWeight: "600",
+  },
+  navLabelActive: {
+    color: "#fff",
   },
 });
