@@ -1,31 +1,33 @@
-import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
-import { useColorScheme } from "react-native";
+import { Stack } from "expo-router";
+import { LogBox, View } from "react-native";
+import Navbar from "../../component/Navbar";
+import "../global.css";
 
-import { AnimatedSplashOverlay } from "@/components/animated-icon";
-
-SplashScreen.preventAutoHideAsync();
+LogBox.ignoreAllLogs();
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <AnimatedSplashOverlay />
+    <View className="flex-1">
       <Stack
         screenOptions={{
           headerShown: false,
         }}
       >
         <Stack.Screen name="index" />
-        <Stack.Screen name="survey-list" />
-        <Stack.Screen name="pemasangan-list" />
-        <Stack.Screen name="survey" />
-        <Stack.Screen name="pemasangan" />
-        <Stack.Screen name="rincian-list" />
-        <Stack.Screen name="rincian" />
-        <Stack.Screen name="gaji-list" />
-        <Stack.Screen name="gaji" />
+        <Stack.Screen name="pages/HomeScreen" />
+        <Stack.Screen name="pages/ResponseScreen" />
+        <Stack.Screen name="pages/PemasanganScreen" />
+        <Stack.Screen name="pages/FormDetailScreen" />
+        <Stack.Screen name="pages/CreateForm" />
+        <Stack.Screen name="pages/ActivityScreen" />
+        <Stack.Screen name="pages/ProfileScreen" />
+        <Stack.Screen name="pages/FormulirScreen" />
+        <Stack.Screen name="pages/KasbonScreen" />
+        <Stack.Screen name="pages/LoginScreen" />
+        <Stack.Screen name="pages/DaftarKaryawanScreen" />
       </Stack>
-    </ThemeProvider>
+
+      <Navbar />
+    </View>
   );
 }
