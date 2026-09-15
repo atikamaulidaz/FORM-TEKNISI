@@ -47,12 +47,25 @@ export default function KasbonScreen() {
   };
 
   const handleSubmit = async () => {
-    setForm({
+    const userId = await AsyncStorage.getItem("user_id");
+
+    console.log("USER ID:", userId);
+
+    if (!userId) {
+      console.log("User ID tidak ditemukan");
+      return;
+    }
+
+    const formData = {
       ...form,
-      user_id: (await AsyncStorage.getItem("user_id")) as string,
-    });
-    const data = await addKasbon(form);
-    if (data.status == 200) {
+      user_id: userId,
+    };
+
+    const data = await addKasbon(formData);
+
+    console.log(data);
+
+    if (data.status === 200) {
       Alert.alert("Success", "Kasbon submitted successfully");
       setOpenForm(false);
     } else {

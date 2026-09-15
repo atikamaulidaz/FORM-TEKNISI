@@ -62,22 +62,51 @@ export async function filterDataKasbon(
 ) {
   let query = supabase.from("kasbon").select("*").eq("id_karyawan", userId);
 
-  // Filter tanggal mulai kalau diisi
-  if (tgl_mulai) {
-    query = query.gte("tanggal_pengajuan", tgl_mulai.toISOString());
+  // HANYA TANGGAL MULAI
+  if (tgl_mulai && !tgl_selesai) {
+    const startDate = new Date(tgl_mulai);
+    startDate.setHours(0, 0, 0, 0);
+
+    const nextDate = new Date(startDate);
+    nextDate.setDate(nextDate.getDate() + 1);
+
+    query = query
+      .gte("tanggal_pengajuan", startDate.toISOString())
+      .lt("tanggal_pengajuan", nextDate.toISOString());
   }
 
-  // Filter tanggal selesai kalau diisi
-  if (tgl_selesai) {
-    query = query.lte("tanggal_pengajuan", tgl_selesai.toISOString());
+  // ADA TANGGAL MULAI DAN SELESAI
+  if (tgl_mulai && tgl_selesai) {
+    const startDate = new Date(tgl_mulai);
+    startDate.setHours(0, 0, 0, 0);
+
+    const endDate = new Date(tgl_selesai);
+    endDate.setDate(endDate.getDate() + 1);
+    endDate.setHours(0, 0, 0, 0);
+
+    query = query
+      .gte("tanggal_pengajuan", startDate.toISOString())
+      .lt("tanggal_pengajuan", endDate.toISOString());
   }
 
-  // Filter status kalau diisi
+  // HANYA TANGGAL SELESAI
+  if (!tgl_mulai && tgl_selesai) {
+    const endDate = new Date(tgl_selesai);
+    endDate.setDate(endDate.getDate() + 1);
+    endDate.setHours(0, 0, 0, 0);
+
+    query = query.lt("tanggal_pengajuan", endDate.toISOString());
+  }
+
+  // STATUS
   if (status) {
     query = query.eq("status", status);
   }
 
   const { data, error } = await query;
+
+  console.log("SERVICE DATA:", data);
+  console.log("SERVICE ERROR:", error);
 
   return { data, error };
 }
