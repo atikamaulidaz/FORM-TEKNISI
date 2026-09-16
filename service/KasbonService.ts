@@ -1,4 +1,5 @@
 import { supabase } from "../database/supabase";
+import { getUserById } from "./AuthService";
 
 export async function getDataKasbonByIdUser(id: string, status: string) {
   const { data, error } = await supabase
@@ -9,14 +10,107 @@ export async function getDataKasbonByIdUser(id: string, status: string) {
   return { data, error };
 }
 
-export async function getTotalKasbonByIdUser(id: string) {
-  const { data, error } = await supabase
+export async function getAllDataKasbon(
+  status: string[] = ["disetujui", "ditolak"],
+  userId?: string,
+  tgl_mulai?: Date,
+  tgl_selesai?: Date,
+) {
+  let statusQuesry = supabase
     .from("kasbon")
-    .select("nominal, status")
-    .eq("user_id", id)
-    .eq("status", "disetujui");
-  const jumlah = data?.reduce((total, item) => total + item.nominal, 0);
-  return { jumlah, error };
+    .select("*, users!kasbon_id_karyawan_fkey(nama_user, role)");
+  if (status) {
+    statusQuesry = statusQuesry.in("status", status);
+  }
+  if (userId) {
+    statusQuesry = statusQuesry.eq("id_karyawan", userId);
+  }
+  if (tgl_mulai && tgl_selesai) {
+    const startDate = new Date(tgl_mulai);
+    startDate.setHours(0, 0, 0, 0);
+
+    const endDate = new Date(tgl_selesai);
+    endDate.setDate(endDate.getDate() + 1);
+    endDate.setHours(0, 0, 0, 0);
+
+    statusQuesry = statusQuesry
+      .gte("tanggal_pengajuan", startDate.toISOString())
+      .lt("tanggal_pengajuan", endDate.toISOString());
+  }
+  if (tgl_mulai && !tgl_selesai) {
+    const startDate = new Date(tgl_mulai);
+    startDate.setHours(0, 0, 0, 0);
+
+    const nextDate = new Date(startDate);
+    nextDate.setDate(nextDate.getDate() + 1);
+
+    statusQuesry = statusQuesry
+      .gte("tanggal_pengajuan", startDate.toISOString())
+      .lt("tanggal_pengajuan", nextDate.toISOString());
+  }
+  if (!tgl_mulai && tgl_selesai) {
+    const endDate = new Date(tgl_selesai);
+    endDate.setDate(endDate.getDate() + 1);
+    endDate.setHours(0, 0, 0, 0);
+
+    statusQuesry = statusQuesry.lt("tanggal_pengajuan", endDate.toISOString());
+  }
+  const { data, error } = await statusQuesry;
+
+  if (data) {
+    return {
+      data: data,
+      message: "Berhasil mengambil data kasbon",
+      status: 200,
+    };
+  } else {
+    return {
+      data: [],
+      message: "error" + error,
+      status: 500,
+    };
+  }
+}
+
+export async function approveKasbon(
+  id: string,
+  status: string,
+  description: string,
+  id_atasan: string,
+) {
+  try {
+    const { error } = await supabase
+      .from("kasbon")
+      .update({
+        status: status,
+        catatan_atasan: description,
+        id_atasan: id_atasan,
+        tanggal_keputusan: new Date(),
+      })
+      .eq("id", id);
+
+    if (error) {
+      console.error("Gagal mengubah status kasbon:", error);
+      return {
+        message: "Gagal mengubah status kasbon",
+        status: 500,
+      };
+    }
+
+    if (status === "disetujui") {
+      await totalKasbonByIdUser(id);
+    }
+
+    return {
+      message: "Berhasil mengubah status kasbon",
+      status: 200,
+    };
+  } catch (error) {
+    return {
+      message: "Terjadi kesalahan saat mengubah status kasbon",
+      status: 500,
+    };
+  }
 }
 
 export async function addKasbon(data_kasbon: any) {
@@ -42,16 +136,6 @@ export async function addKasbon(data_kasbon: any) {
     status: 200,
     message: "Berhasil megajukan kasbon",
   };
-}
-
-export async function updateNominalkasbon(id: string, nominal: number) {
-  const { jumlah } = await getTotalKasbonByIdUser(id);
-  const totalKasbon = nominal + (jumlah || 0);
-  const { data, error } = await supabase
-    .from("users")
-    .update({ kasbon: totalKasbon })
-    .eq("id", id);
-  return { data, error };
 }
 
 export async function filterDataKasbon(
@@ -105,8 +189,22 @@ export async function filterDataKasbon(
 
   const { data, error } = await query;
 
-  console.log("SERVICE DATA:", data);
-  console.log("SERVICE ERROR:", error);
-
   return { data, error };
+}
+
+export async function totalKasbonByIdUser(id: string) {
+  const dataKasbon = await supabase.from("kasbon").select("*").eq("id", id);
+  const user = await getUserById(dataKasbon.data?.[0].id_karyawan);
+  if (!user.data) {
+    return {
+      message: "User tidak ditemukan",
+      error: true,
+    };
+  }
+  const totalKasbon = user.data.kasbon + dataKasbon.data?.[0].nominal;
+  const { error } = await supabase
+    .from("users")
+    .update({ kasbon: totalKasbon })
+    .eq("id", user.data.id);
+  return { totalKasbon, error: error };
 }

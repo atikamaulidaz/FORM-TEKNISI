@@ -1,4 +1,4 @@
-import { Stack } from "expo-router";
+import { Stack, usePathname } from "expo-router";
 import { LogBox, View } from "react-native";
 import Navbar from "../../component/Navbar";
 import "../global.css";
@@ -6,6 +6,13 @@ import "../global.css";
 LogBox.ignoreAllLogs();
 
 export default function RootLayout() {
+  const pathname = usePathname();
+
+  const hideNavbar =
+    pathname === "/" ||
+    pathname === "/auth/LoginScreen" ||
+    pathname === "/auth/DaftarKaryawanScreen";
+
   return (
     <View className="flex-1">
       <Stack
@@ -14,20 +21,20 @@ export default function RootLayout() {
         }}
       >
         <Stack.Screen name="index" />
-        <Stack.Screen name="pages/HomeScreen" />
-        <Stack.Screen name="pages/ResponseScreen" />
-        <Stack.Screen name="pages/PemasanganScreen" />
-        <Stack.Screen name="pages/FormDetailScreen" />
-        <Stack.Screen name="pages/CreateForm" />
-        <Stack.Screen name="pages/ActivityScreen" />
-        <Stack.Screen name="pages/ProfileScreen" />
-        <Stack.Screen name="pages/FormulirScreen" />
-        <Stack.Screen name="pages/KasbonScreen" />
-        <Stack.Screen name="pages/LoginScreen" />
-        <Stack.Screen name="pages/DaftarKaryawanScreen" />
+        <Stack.Screen name="general/HomeScreen" />
+        <Stack.Screen name="admin/ResponseScreen" />
+        <Stack.Screen name="admin/FormDetailScreen" />
+        <Stack.Screen name="admin/CreateForm" />
+        <Stack.Screen name="general/ActivityScreen" />
+        <Stack.Screen name="general/ProfileScreen" />
+        <Stack.Screen name="admin/FormulirScreen" />
+        <Stack.Screen name="general/KasbonScreen" />
+        <Stack.Screen name="auth/LoginScreen" />
+        <Stack.Screen name="auth/DaftarKaryawanScreen" />
+        <Stack.Screen name="admin/KasbonApprovalScreen" />
       </Stack>
 
-      <Navbar />
+      {!hideNavbar && <Navbar />}
     </View>
   );
 }

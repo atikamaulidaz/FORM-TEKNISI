@@ -49,8 +49,6 @@ export default function KasbonScreen() {
   const handleSubmit = async () => {
     const userId = await AsyncStorage.getItem("user_id");
 
-    console.log("USER ID:", userId);
-
     if (!userId) {
       console.log("User ID tidak ditemukan");
       return;
@@ -62,8 +60,6 @@ export default function KasbonScreen() {
     };
 
     const data = await addKasbon(formData);
-
-    console.log(data);
 
     if (data.status === 200) {
       Alert.alert("Success", "Kasbon submitted successfully");
@@ -229,34 +225,32 @@ export default function KasbonScreen() {
 
             {/* FILTER TANGGAL */}
             <View className="flex-row gap-3">
-              <View className="flex-row gap-3">
-                {/* MULAI */}
+              <View className="flex-row gap-3 w-full">
                 <Pressable
                   onPress={() => setShowDateTimeMulai(true)}
-                  className="flex-1 h-12 border border-gray-200 rounded-xl px-3 flex-row items-center"
+                  className="flex-1 h-14 border border-gray-300 rounded-xl px-3 flex-row items-center bg-white"
                 >
-                  <Ionicons name="calendar-outline" size={17} color="#9CA3AF" />
+                  <Ionicons name="calendar-outline" size={20} color="#374151" />
 
                   <View className="ml-2 flex-1">
-                    <Text className="text-[10px] text-gray-400">Mulai</Text>
+                    <Text className="text-xs text-gray-500">Mulai</Text>
 
-                    <Text className="text-sm text-gray-700">
+                    <Text className="text-xs text-gray-900">
                       {formatDate(tanggalMulai)}
                     </Text>
                   </View>
                 </Pressable>
 
-                {/* SAMPAI */}
                 <Pressable
                   onPress={() => setShowDateTimeAkhir(true)}
-                  className="flex-1 h-12 border border-gray-200 rounded-xl px-3 flex-row items-center"
+                  className="flex-1 h-14 border border-gray-300 rounded-xl px-3 flex-row items-center bg-white"
                 >
-                  <Ionicons name="calendar-outline" size={17} color="#9CA3AF" />
+                  <Ionicons name="calendar-outline" size={20} color="#374151" />
 
                   <View className="ml-2 flex-1">
-                    <Text className="text-[10px] text-gray-400">Sampai</Text>
+                    <Text className="text-xs text-gray-500">Sampai</Text>
 
-                    <Text className="text-sm text-gray-700">
+                    <Text className="text-xs text-gray-900">
                       {formatDate(tanggalAkhir)}
                     </Text>
                   </View>
